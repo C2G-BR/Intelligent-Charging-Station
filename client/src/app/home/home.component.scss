@@ -1,0 +1,60 @@
+.car-slot {
+    height: 12em;
+    margin: 1.5em 0.5em;
+    border-radius: 15px;
+    border: 2px solid black;
+	position: relative;
+	cursor: pointer;
+}
+
+.car-slot span {
+    font-weight: bold;
+    font-size: 24px;
+	color: black;
+}
+
+.car-slot .delete-vehicle {
+	font-size: 18px;
+	position: absolute;
+	top: -2px;
+	right: -2px;
+	padding: 0 3px;
+	border: 2px solid black;
+	border-top-right-radius: 15px;
+	border-bottom-left-radius: 10px;
+	color: black;
+}
+
+.car-slot .delete-vehicle:hover {
+	cursor: pointer;
+	box-shadow: inset 0 0 20px rgba(255, 255, 255, .5), 0 0 20px rgba(255, 255, 255, .2);
+	outline-color: rgba(255, 255, 255, 0);
+	outline-offset: 15px;
+	text-shadow: 1px 1px 2px #427388; 
+}
+
+.car-slot .vehicle-position {
+	font-size: 18px;
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	padding: 0 5px;
+	border: 2px solid black;
+	border-top-left-radius: 15px;
+	border-bottom-right-radius: 10px;
+	color: black;
+	cursor: default;
+}
+
+.btn-simulate {
+	width: 100%;
+	font-size: 1.75em;
+	font-weight: bold;
+	color: black;
+}
+
+#lineChart {
+	margin: 10px auto;
+	width: 100%;
+  }
+  

@@ -1,0 +1,103 @@
+<!-- <img src="./assets/img/brand/argon-white.png" style="width: 100%;" class="img-fluid"> -->
+<main>
+  <div class="position-relative">
+    <section class="section section-lg section-hero section-shaped">
+      <div class="shape shape-style-1 shape-primary">
+      </div>
+      <div class="container shape-container d-flex  py-lg">
+        <div class="col px-0">
+		      <div class="row mb-5">
+            <div class="col-lg-12">
+              <button class="btn btn-primary btn-simulate" type="button" [disabled]="!simulate_button" (click)="simulate()">Start Simulation</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <form [formGroup]="changePowerStation" (ngSubmit)="powerStation()">
+              <div class="row mb-5 mt-5">
+                <div class="col-lg-12">
+                  <h2 class="text-center">Setup Loading Station Credentials</h2>
+                </div>
+                <div class="col-lg-3">
+                  <label for="algorithm">Algorithmus</label>
+                  <select class="form-control" name="algorithm" formControlName="algorithm">
+                    <option value="ddpg" [selected]="algorithm === 'ddpg'">Deep Deterministic Policy Gradient</option>
+                    <option value="fcfs" [selected]="algorithm === 'fcfs'">First - Come - First - Serve</option>
+                  </select>
+                </div>
+                <div class="col-lg-3">
+                  <label for="max_power">Maximale Kapazität Station [kW]</label>
+                  <input type="number" formControlName="max_power" value="{{max_power}}" min="0" class="form-control" name="max_power" />
+                </div>
+                <div class="col-lg-3">
+                  <label for="duration_time_step">Zeitintervall [h]</label>
+                  <input type="number" formControlName="duration_time_step" value="{{duration_time_step}}" min="0" max="1" class="form-control" name="duration_time_step" />
+                </div>
+                <div class="col-lg-3">
+                  <label for="positions">Anzahl Ladestationen</label>
+                  <input type="number" formControlName="positions" value="{{positions}}" min="1" class="form-control" name="positions" disabled />
+                </div>
+                <div class="col-lg-12">
+                  <label for="api_address">API Address</label>
+                  <input type="text" formControlName="api_address" value="{{api_address}}" class="form-control" name="api_address" />
+                </div>
+                <div class="col-lg-12 mt-3 text-center">
+                  <button class="btn btn-primary" type="submit">Change Loading Station Credentials</button>
+                </div>
+              </div>
+            </form>
+		      </div>
+          <div class="row">
+            <div class="col-lg-8">
+              <h2 class="text-center">Car Slots</h2>
+              <div fxLayout="row wrap" fxLayoutAlign="space-around stretch">
+                <div fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="50%" fxFlex.md="20%" *ngFor="let number of slots | keyvalue : returnZero">
+				          <div class="car-slot d-flex align-items-center justify-content-center" (click)="change_vehicle($event, number.key)" [ngStyle]="{'background-image': number.value.capacity_max != null ? 'linear-gradient(to bottom, #f8362c 0% ' + (100 - ((number.value.capacity_history[number.value.capacity_history.length-1] / number.value.capacity_max) * 100)) + '%, #57f45f ' + (100 - ((number.value.capacity_history[number.value.capacity_history.length-1] / number.value.capacity_max) * 100)) + '% 100%)' : 'none'}">
+                    <div class="delete-vehicle" (click)="delete_vehicle($event, number.key)">&#10006;</div>
+                    <div class="vehicle-position">{{number.key}}</div>
+					          <span>{{number.value.capacity_max != null ? ((number.value.capacity_history[number.value.capacity_history.length-1] / number.value.capacity_max) * 100).toFixed(0).toString() + ' %': 'No Car'}}</span>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary mt-4" type="button" (click)="create_demo_data()">Create Demo Data</button>
+            </div>
+            <div class="col-lg-4" *ngIf="this.slot_form">
+              <h2 class="text-center">Setup Car Credentials</h2>
+              <div class="form-group">
+                <form [formGroup]="changeVehicle" (submit)="slot()" autocomplete="off" novalidate>
+                  <label for="position">Position</label>
+                  <input type="number" formControlName="position" value="" min="0" class="form-control" name="position" disabled required />
+                  <label for="capacity_max">Batteriekapazität</label>
+                  <input type="number" formControlName="capacity_max" value="" min="0" class="form-control" name="capacity_max" required />
+                  <label for="capacity_actual">Aktueller Akkustand</label>
+                  <input type="number" formControlName="capacity_actual" value="" min="0" class="form-control" name="capacity_actual" required />
+                  <label for="charging_power_min">Ladeleistung min</label>
+                  <input type="number" formControlName="charging_power_min" value="" min="0" class="form-control" name="charging_power_min" required />
+                  <label for="charging_power_max">Ladeleistung max</label>
+                  <input type="number" formControlName="charging_power_max" value="" min="0" class="form-control" name="charging_power_max" required />
+                  <label for="power_dissipation">Verlustleistung</label>
+                  <input type="number" formControlName="power_dissipation" value="" min="0" class="form-control" name="power_dissipation" required />
+                  <label for="limit">Limit Batteriekapazität (Relativ 0-1)</label>
+                  <input type="number" formControlName="limit" value="" min="0" max="1" class="form-control" name="limit" required />
+                  <label for="time_steps">Zeitintervalle</label>
+                  <input type="number" formControlName="time_steps" value="" min="0" class="form-control" name="time_steps" disabled required />
+                  <label for="exp_charge">Exponent mit Einfluss auf Ladevorgang</label>
+                  <input type="number" formControlName="exp_charge" value="" class="form-control" name="exp_charge" disabled required />
+                  <google-chart id="lineChart"
+                    [title]="chart.title"
+                    [type]="chart.type"
+                    [data]="chart.data"
+                    [columns]="chart.columnNames"
+                    [options]="chart.options"
+                  >
+                  </google-chart>
+                  <button class="btn btn-primary mt-4" type="submit">Save Car Credentials</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- <app-sections></app-sections> -->
+</main>
